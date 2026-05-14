@@ -4,19 +4,12 @@ import { PortfolioMetrics } from '@/types/portfolio.types';
 import { API_ENDPOINTS, ENABLE_MOCK } from './constants';
 
 // ─── Axios Instance ──────────────────────────────────────────────────────────
-// baseURL is '/api' — this maps to Next.js API routes at src/app/api/
-// Combined with API_ENDPOINTS:
-//   '/api' + '/query/'            → POST /api/query/            → proxied to Django /api/query/
-//   '/api' + '/portfolio/metrics/'→ GET  /api/portfolio/metrics/ → proxied to Django /api/portfolio/metrics/
 const apiClient = axios.create({
   baseURL: '/api',
-  timeout: 60_000,  // 60s — Claude generation can take time
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  timeout: 60_000,
+  headers: { 'Content-Type': 'application/json' },
 });
 
-// Response interceptor — normalize errors
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError<{ message?: string; detail?: string; sql?: string }>) => {
@@ -33,7 +26,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-// ─── Mock Data (used when ENABLE_MOCK=true and backend isn't running) ─────────
+// ─── Mock Data ────────────────────────────────────────────────────────────────
 const MOCK_RESPONSE: QueryResponse = {
   sql: `SELECT
   h.record_date,
@@ -50,10 +43,10 @@ WHERE h.status NOT IN ('Paid-off', 'Write-off')
 GROUP BY h.record_date
 ORDER BY h.record_date`,
   data: [
-    { record_date: '2024-03-01', par0_rate: 8.2, par30_rate: 3.1, par60_rate: 1.2 },
-    { record_date: '2024-06-01', par0_rate: 11.4, par30_rate: 5.2, par60_rate: 2.1 },
-    { record_date: '2024-09-01', par0_rate: 14.7, par30_rate: 7.8, par60_rate: 3.4 },
-    { record_date: '2024-12-01', par0_rate: 18.3, par30_rate: 9.1, par60_rate: 4.8 },
+    { record_date: '2024-03-01', par0_rate: 8.2,  par30_rate: 3.1,  par60_rate: 1.2 },
+    { record_date: '2024-06-01', par0_rate: 11.4, par30_rate: 5.2,  par60_rate: 2.1 },
+    { record_date: '2024-09-01', par0_rate: 14.7, par30_rate: 7.8,  par60_rate: 3.4 },
+    { record_date: '2024-12-01', par0_rate: 18.3, par30_rate: 9.1,  par60_rate: 4.8 },
     { record_date: '2025-03-01', par0_rate: 22.1, par30_rate: 12.3, par60_rate: 6.2 },
     { record_date: '2025-06-01', par0_rate: 25.6, par30_rate: 14.7, par60_rate: 8.1 },
   ],
@@ -66,46 +59,36 @@ ORDER BY h.record_date`,
   execution_time_ms: 42,
 };
 
+// All fields match the updated PortfolioMetrics interface
 const MOCK_METRICS: PortfolioMetrics = {
   total_loans: 994,
   active_loans: 72,
   par0_rate: 0.256,
+  par30_rate: 0.18,
+  par60_rate: 0.09,
   writeoff_rate: 0.585,
+  writeoff_count: 582,
   total_principal_kes: 142_800_000,
   rescheduled_count: 202,
 };
 
-// ─── API Functions ───────────────────────────────────────────────────────────
+// ─── API Functions ────────────────────────────────────────────────────────────
 
-/**
- * Send a natural language question to the agent.
- * Calls POST /api/query/ via the Next.js proxy route.
- */
 export async function sendQuery(question: string): Promise<QueryResponse> {
   if (ENABLE_MOCK) {
-    // Simulate network + AI latency for mock mode
     await new Promise((resolve) => setTimeout(resolve, 3400));
     return { ...MOCK_RESPONSE };
   }
-
   const payload: QueryRequest = { question };
-  const response = await apiClient.post<QueryResponse>(
-    API_ENDPOINTS.query,
-    payload
-  );
+  const response = await apiClient.post<QueryResponse>(API_ENDPOINTS.query, payload);
   return response.data;
 }
 
-/**
- * Fetch dashboard KPI metrics.
- * Calls GET /api/portfolio/metrics/ via the Next.js proxy route.
- */
 export async function fetchPortfolioMetrics(): Promise<PortfolioMetrics> {
   if (ENABLE_MOCK) {
     await new Promise((resolve) => setTimeout(resolve, 600));
     return MOCK_METRICS;
   }
-
   const response = await apiClient.get<PortfolioMetrics>(API_ENDPOINTS.metrics);
   return response.data;
 }

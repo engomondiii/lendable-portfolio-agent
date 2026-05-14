@@ -4,7 +4,6 @@ import React from 'react';
 import { clsx } from 'clsx';
 import { TopBar } from './TopBar';
 import { Sidebar } from './Sidebar';
-import { StatusBar } from './StatusBar';
 import { useUIStore } from '@/store/uiStore';
 
 interface RootLayoutProps {
@@ -13,96 +12,57 @@ interface RootLayoutProps {
 }
 
 export const RootLayout: React.FC<RootLayoutProps> = ({ children, sqlPanel }) => {
-  const { sidebarOpen, sqlPanelOpen } = useUIStore();
+  const { sidebarOpen, sqlPanelOpen, setSqlPanelOpen } = useUIStore();
 
   return (
-    <div
-      className={clsx(
-        'h-screen overflow-hidden',
-        // Grid layout
-        'grid',
-        // Rows: topbar | content | statusbar
-        'grid-rows-[var(--topbar-height)_1fr_var(--statusbar-height)]',
-        // Cols: sidebar | main | (optional sql panel)
-        sidebarOpen && sqlPanelOpen
-          ? 'grid-cols-[var(--sidebar-width)_1fr_var(--sql-panel-width)]'
-          : sidebarOpen && !sqlPanelOpen
-          ? 'grid-cols-[var(--sidebar-width)_1fr]'
-          : !sidebarOpen && sqlPanelOpen
-          ? 'grid-cols-[0_1fr_var(--sql-panel-width)]'
-          : 'grid-cols-[0_1fr]',
-        'transition-[grid-template-columns] duration-300 ease-smooth'
-      )}
-    >
-      {/* TopBar — spans full width */}
-      <div
-        className="col-span-full"
-        style={{ gridArea: '1 / 1 / 2 / -1' }}
-      >
-        <TopBar />
+    <div className="h-screen w-screen overflow-hidden flex flex-col bg-bg-base">
+
+      {/* ── TopBar — full width, fixed height ─────────────────────────── */}
+      <TopBar />
+
+      {/* ── Body row — sidebar + main ──────────────────────────────────── */}
+      <div className="flex flex-1 overflow-hidden min-h-0">
+
+        {/* Sidebar — collapsible, fixed width */}
+        <aside
+          className={clsx(
+            'flex-shrink-0 overflow-hidden',
+            'border-r border-border bg-bg-surface',
+            'transition-[width] duration-300 ease-in-out',
+            sidebarOpen ? 'w-[260px]' : 'w-0'
+          )}
+        >
+          {sidebarOpen && <Sidebar />}
+        </aside>
+
+        {/* Main content — takes all remaining space */}
+        <main className="flex-1 overflow-hidden flex flex-col min-w-0 relative">
+          {children}
+        </main>
       </div>
 
-      {/* Sidebar */}
-      {sidebarOpen && (
+      {/* ── SQL Panel — fixed overlay drawer from the right ────────────── */}
+      {/* Backdrop */}
+      {sqlPanelOpen && (
         <div
-          className="row-start-2 col-start-1 overflow-hidden"
-          style={{ gridArea: '2 / 1 / 3 / 2' }}
-        >
-          <Sidebar />
-        </div>
-      )}
-
-      {/* Main content */}
-      <main
-        className={clsx(
-          'row-start-2 overflow-hidden flex flex-col',
-          'bg-bg-base',
-          sidebarOpen ? 'col-start-2' : 'col-start-1'
-        )}
-        style={{
-          gridColumn: sidebarOpen
-            ? sqlPanelOpen
-              ? '2 / 3'
-              : '2 / -1'
-            : sqlPanelOpen
-            ? '1 / 3'
-            : '1 / -1',
-          gridRow: '2 / 3',
-        }}
-      >
-        {/* Subtle grid background texture */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.025]"
-          style={{
-            backgroundImage: `
-              linear-gradient(var(--color-brand-primary) 1px, transparent 1px),
-              linear-gradient(90deg, var(--color-brand-primary) 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px',
-          }}
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+          onClick={() => setSqlPanelOpen(false)}
           aria-hidden
         />
-        <div className="relative flex-1 flex flex-col overflow-hidden">
-          {children}
-        </div>
-      </main>
-
-      {/* SQL Panel */}
-      {sqlPanelOpen && sqlPanel && (
-        <div
-          className="row-start-2 overflow-hidden border-l border-border bg-bg-surface"
-          style={{ gridArea: `2 / ${sidebarOpen ? 3 : 2} / 3 / -1` }}
-        >
-          {sqlPanel}
-        </div>
       )}
 
-      {/* StatusBar — spans full width */}
+      {/* Drawer */}
       <div
-        className="col-span-full border-t border-border bg-bg-surface/60"
-        style={{ gridArea: '3 / 1 / 4 / -1' }}
+        className={clsx(
+          'fixed top-0 right-0 h-full z-50',
+          'w-[420px] max-w-[90vw]',
+          'bg-bg-surface border-l border-border',
+          'flex flex-col',
+          'transition-transform duration-300 ease-in-out',
+          sqlPanelOpen ? 'translate-x-0' : 'translate-x-full'
+        )}
       >
-        <StatusBar />
+        {sqlPanel}
       </div>
     </div>
   );

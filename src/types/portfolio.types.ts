@@ -44,7 +44,10 @@ export interface PortfolioMetrics {
   total_loans: number;
   active_loans: number;
   par0_rate: number;
+  par30_rate: number;
+  par60_rate: number;
   writeoff_rate: number;
+  writeoff_count: number;
   total_principal_kes: number;
   rescheduled_count: number;
 }

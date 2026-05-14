@@ -16,10 +16,7 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result }) => {
   const chartId = useId();
   const safeChartId = `chart-${chartId.replace(/:/g, '')}`;
 
-  // Allow user to switch between chart and table regardless of agent suggestion
-  const [viewType, setViewType] = useState<'chart' | 'table'>(
-    result.output_type
-  );
+  const [viewType, setViewType] = useState<'chart' | 'table'>(result.output_type);
 
   const resolvedChartType = useChartType(
     result.chart_type as ChartType | null,
@@ -46,14 +43,14 @@ export const ResultsPanel: React.FC<ResultsPanelProps> = ({ result }) => {
           data={result.data}
           columns={result.columns}
           chartType={resolvedChartType}
-          height={320}
+          height={380}  /* Taller chart — more readable */
           id={safeChartId}
         />
       ) : (
         <DataTable
           data={result.data}
           columns={result.columns}
-          maxHeight={420}
+          maxHeight={500}  /* More rows visible */
         />
       )}
     </div>

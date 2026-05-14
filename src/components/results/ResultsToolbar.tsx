@@ -15,14 +15,14 @@ interface ResultsToolbarProps {
 }
 
 const TableIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.3">
+  <svg width="14" height="14" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.4">
     <rect x="1" y="1" width="11" height="11" rx="1.5"/>
     <path d="M1 5h11M1 9h11M5 1v11"/>
   </svg>
 );
 
 const ChartIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.3">
+  <svg width="14" height="14" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.4">
     <path d="M1 10.5L4.5 7l3 3 4-6" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
@@ -36,27 +36,24 @@ export const ResultsToolbar: React.FC<ResultsToolbarProps> = ({
   data,
   columns,
 }) => (
-  <div className="flex items-center justify-between mb-3">
-    {/* Left — row count */}
-    <div className="flex items-center gap-2">
-      <span className="text-text-muted text-[10px] font-mono-data">
-        {rowCount.toLocaleString()} row{rowCount !== 1 ? 's' : ''}
-      </span>
-    </div>
+  <div className="flex items-center justify-between mb-4">
+    {/* Row count */}
+    <span className="text-text-muted text-sm font-mono-data">
+      {rowCount.toLocaleString()} row{rowCount !== 1 ? 's' : ''}
+    </span>
 
-    {/* Right — toggle + export */}
-    <div className="flex items-center gap-2">
-      {/* View toggle */}
+    {/* Right: toggle + export */}
+    <div className="flex items-center gap-3">
       {canToggle && (
-        <div className="flex items-center rounded border border-border bg-bg-elevated p-0.5 gap-0.5">
+        <div className="flex items-center bg-bg-elevated border border-border rounded-lg p-1 gap-0.5">
           <button
             onClick={() => onToggle('chart')}
             aria-label="Chart view"
             className={clsx(
-              'flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-mono-data',
+              'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-mono-data',
               'transition-all duration-150',
               outputType === 'chart'
-                ? 'bg-brand-subtle text-brand-primary border border-brand-primary/20'
+                ? 'bg-accent-subtle text-accent border border-accent/25 font-medium'
                 : 'text-text-muted hover:text-text-secondary'
             )}
           >
@@ -67,10 +64,10 @@ export const ResultsToolbar: React.FC<ResultsToolbarProps> = ({
             onClick={() => onToggle('table')}
             aria-label="Table view"
             className={clsx(
-              'flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-mono-data',
+              'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-mono-data',
               'transition-all duration-150',
               outputType === 'table'
-                ? 'bg-brand-subtle text-brand-primary border border-brand-primary/20'
+                ? 'bg-accent-subtle text-accent border border-accent/25 font-medium'
                 : 'text-text-muted hover:text-text-secondary'
             )}
           >
@@ -80,7 +77,6 @@ export const ResultsToolbar: React.FC<ResultsToolbarProps> = ({
         </div>
       )}
 
-      {/* Export */}
       <ExportButton
         data={data}
         columns={columns}
