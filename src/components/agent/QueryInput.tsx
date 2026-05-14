@@ -15,7 +15,14 @@ interface QueryInputProps {
 const MAX_CHARS = 500;
 
 const SendIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 14 14"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+  >
     <path d="M7 1l6 6-6 6M1 7h12" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
@@ -30,24 +37,17 @@ export const QueryInput: React.FC<QueryInputProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-resize textarea
   const resize = useCallback(() => {
     const ta = textareaRef.current;
     if (!ta) return;
     ta.style.height = 'auto';
-    ta.style.height = `${Math.min(ta.scrollHeight, 200)}px`;
+    ta.style.height = `${Math.min(ta.scrollHeight, 220)}px`;
   }, []);
 
-  useEffect(() => {
-    resize();
-  }, [value, resize]);
+  useEffect(() => { resize(); }, [value, resize]);
 
-  // Focus on mount
-  useEffect(() => {
-    textareaRef.current?.focus();
-  }, []);
+  useEffect(() => { textareaRef.current?.focus(); }, []);
 
-  // Sync initialValue
   useEffect(() => {
     if (initialValue) setValue(initialValue);
   }, [initialValue]);
@@ -81,18 +81,15 @@ export const QueryInput: React.FC<QueryInputProps> = ({
             ? 'border-brand-primary shadow-[0_0_0_3px_var(--color-brand-glow)]'
             : isOverLimit
             ? 'border-risk-danger shadow-[0_0_0_2px_var(--color-risk-danger-bg)]'
-            : 'border-border hover:border-border-strong'
+            : 'border-border-strong hover:border-brand-primary/40'
         )}
       >
-        {/* Textarea */}
+        {/* Textarea — larger text, brighter placeholder */}
         <textarea
           ref={textareaRef}
           id="query-input"
           value={value}
-          onChange={(e) => {
-            setValue(e.target.value);
-            resize();
-          }}
+          onChange={(e) => { setValue(e.target.value); resize(); }}
           onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -101,27 +98,29 @@ export const QueryInput: React.FC<QueryInputProps> = ({
           rows={1}
           className={clsx(
             'w-full bg-transparent',
-            'px-4 pt-3.5 pb-10',
-            'text-sm font-body text-text-primary placeholder:text-text-muted',
+            'px-4 pt-4 pb-12',
+            // Larger, brighter text
+            'text-base font-body text-text-primary',
+            'placeholder:text-text-muted placeholder:text-base',
             'resize-none outline-none',
-            'min-h-[52px] max-h-[200px]',
+            'min-h-[60px] max-h-[220px]',
             'disabled:opacity-60 disabled:cursor-not-allowed',
             'transition-opacity duration-150'
           )}
-          style={{ lineHeight: '1.6' }}
+          style={{ lineHeight: '1.65' }}
           aria-label="Ask a question about the portfolio"
-          maxLength={MAX_CHARS + 50} // Allow slight overage before hard block
+          maxLength={MAX_CHARS + 50}
         />
 
         {/* Bottom toolbar */}
-        <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-3 pb-2.5">
+        <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-4 pb-3">
           {/* Left — char count + hint */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <span
               className={clsx(
-                'text-[10px] font-mono-data transition-colors duration-150',
+                'text-xs font-mono-data transition-colors duration-150',
                 isOverLimit
-                  ? 'text-risk-danger'
+                  ? 'text-risk-danger font-semibold'
                   : charCount > MAX_CHARS * 0.8
                   ? 'text-risk-warning'
                   : 'text-text-muted'
@@ -130,7 +129,7 @@ export const QueryInput: React.FC<QueryInputProps> = ({
               {charCount}/{MAX_CHARS}
             </span>
             {!isLoading && (
-              <span className="hidden sm:block text-text-muted text-[10px] font-mono-data">
+              <span className="hidden sm:block text-text-muted text-xs font-mono-data">
                 Enter ↵ to send · Shift+Enter for new line
               </span>
             )}
@@ -142,7 +141,7 @@ export const QueryInput: React.FC<QueryInputProps> = ({
             disabled={!canSubmit}
             aria-label="Submit query"
             className={clsx(
-              'flex items-center justify-center w-8 h-8 rounded-lg',
+              'flex items-center justify-center w-9 h-9 rounded-lg',
               'transition-all duration-150',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50',
               canSubmit
@@ -154,12 +153,12 @@ export const QueryInput: React.FC<QueryInputProps> = ({
                 : 'bg-bg-elevated text-text-muted cursor-not-allowed border border-border'
             )}
           >
-            {isLoading ? <Spinner size="xs" color="brand" /> : <SendIcon />}
+            {isLoading ? <Spinner size="sm" color="brand" /> : <SendIcon />}
           </button>
         </div>
       </div>
 
-      {/* Suggestions — shown when input is empty and not loading */}
+      {/* Suggestion chips — shown when input is empty and not loading */}
       {showSuggestions && !value && !isLoading && (
         <div className="mt-3">
           <QueryInputSuggestions

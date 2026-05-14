@@ -8,22 +8,23 @@ interface EmptyStateProps {
   onSelectQuestion: (question: string) => void;
 }
 
-// Lendable diamond with data visualization aesthetic
 const HeroMark = () => (
-  <div className="relative flex items-center justify-center w-20 h-20">
-    {/* Outer glow ring */}
+  <div className="relative flex items-center justify-center w-24 h-24">
+    {/* Glow ring */}
     <div
-      className="absolute inset-0 rounded-full opacity-20"
+      className="absolute inset-0 rounded-full opacity-25"
       style={{
-        background:
-          'radial-gradient(circle, var(--color-brand-primary) 0%, transparent 70%)',
-        animation: 'glowPulse 3s ease-in-out infinite',
+        background: 'radial-gradient(circle, var(--color-brand-primary) 0%, transparent 70%)',
+        animationName: 'glowPulse',
+        animationDuration: '3s',
+        animationTimingFunction: 'ease-in-out',
+        animationIterationCount: 'infinite',
+        animationFillMode: 'none',
       }}
     />
-    {/* Diamond mark */}
     <svg
-      width="48"
-      height="48"
+      width="56"
+      height="56"
       viewBox="0 0 40 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -53,37 +54,38 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onSelectQuestion }) => {
     <div
       className={clsx(
         'flex-1 flex flex-col items-center justify-center',
-        'px-6 py-12 text-center',
+        'px-6 py-16 text-center',
         'animate-fade-in'
       )}
     >
       {/* Hero mark */}
       <div
-        className="mb-6 animate-fade-in-up opacity-0"
+        className="mb-7 animate-fade-in-up opacity-0"
         style={{ animationDelay: '0.05s', animationFillMode: 'forwards' }}
       >
         <HeroMark />
       </div>
 
-      {/* Heading */}
+      {/* Main heading — large and bright */}
       <div
-        className="mb-2 animate-fade-in-up opacity-0"
+        className="mb-3 animate-fade-in-up opacity-0"
         style={{ animationDelay: '0.12s', animationFillMode: 'forwards' }}
       >
-        <h1 className="font-display font-bold text-2xl text-text-primary tracking-tight">
+        <h1 className="font-display font-bold text-3xl text-text-primary tracking-tight">
           Ask anything about the portfolio
         </h1>
       </div>
 
-      {/* Sub-heading */}
+      {/* Sub-heading — bright secondary text */}
       <div
-        className="mb-8 animate-fade-in-up opacity-0"
+        className="mb-10 animate-fade-in-up opacity-0"
         style={{ animationDelay: '0.18s', animationFillMode: 'forwards' }}
       >
-        <p className="text-text-secondary text-sm font-body max-w-md leading-relaxed">
+        <p className="text-text-secondary text-base font-body max-w-lg leading-relaxed">
           Natural language queries on{' '}
-          <span className="text-brand-primary font-mono-data">994 loans</span> across{' '}
-          <span className="text-brand-primary font-mono-data">4 originators</span>.
+          <span className="text-brand-primary font-mono-data font-medium">994 loans</span>{' '}
+          across{' '}
+          <span className="text-brand-primary font-mono-data font-medium">4 originators</span>.
           <br />
           Get charts, tables, and risk analysis — no SQL required.
         </p>
@@ -92,18 +94,18 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onSelectQuestion }) => {
       {/* Suggestion cards */}
       <QueryInputSuggestions onSelect={onSelectQuestion} compact={false} />
 
-      {/* Bottom hint */}
+      {/* Keyboard hint */}
       <div
-        className="mt-8 animate-fade-in-up opacity-0"
+        className="mt-10 animate-fade-in-up opacity-0"
         style={{ animationDelay: '0.55s', animationFillMode: 'forwards' }}
       >
-        <p className="text-text-muted text-[11px] font-mono-data">
+        <p className="text-text-muted text-sm font-mono-data">
           Press{' '}
-          <kbd className="px-1.5 py-0.5 rounded bg-bg-elevated border border-border text-[10px]">
+          <kbd className="px-2 py-0.5 rounded bg-bg-elevated border border-border-strong text-text-secondary text-xs">
             Enter
           </kbd>{' '}
           to submit ·{' '}
-          <kbd className="px-1.5 py-0.5 rounded bg-bg-elevated border border-border text-[10px]">
+          <kbd className="px-2 py-0.5 rounded bg-bg-elevated border border-border-strong text-text-secondary text-xs">
             Shift+Enter
           </kbd>{' '}
           for new line

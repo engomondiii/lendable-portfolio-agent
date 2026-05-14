@@ -1,8 +1,16 @@
 import type { Metadata } from 'next';
-import { Sora, DM_Mono } from 'next/font/google';
+import { Sora, DM_Mono, Inter } from 'next/font/google';
 import './globals.css';
 
-// Sora — clean, modern body font with personality
+// Inter — world-standard professional UI font (fallback for Cabinet Grotesk)
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+});
+
+// Sora — clean modern body font
 const sora = Sora({
   subsets: ['latin'],
   variable: '--font-sora',
@@ -10,7 +18,7 @@ const sora = Sora({
   weight: ['300', '400', '500', '600', '700'],
 });
 
-// DM Mono — terminal-style monospace for data, SQL, numbers
+// DM Mono — terminal-style for data, SQL, numbers
 const dmMono = DM_Mono({
   subsets: ['latin'],
   variable: '--font-dm-mono',
@@ -18,16 +26,13 @@ const dmMono = DM_Mono({
   weight: ['300', '400', '500'],
 });
 
-// Cabinet Grotesk is not on Google Fonts — we'll load it via @font-face in CSS
-// using a CDN fallback. For local: drop CabinetGrotesk-Variable.woff2 in /public/fonts/
-
 export const metadata: Metadata = {
   title: 'Lendable Portfolio Intelligence',
   description:
     'AI-powered natural language interface for interrogating the Lendable loan portfolio database.',
   keywords: ['portfolio analytics', 'credit risk', 'PAR', 'loan intelligence', 'Lendable'],
   authors: [{ name: 'Lendable Data Team' }],
-  robots: 'noindex, nofollow', // Internal tool — don't index
+  robots: 'noindex, nofollow',
   icons: {
     icon: '/icons/favicon.ico',
   },
@@ -52,11 +57,12 @@ export default function RootLayout({
           href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500,400&display=swap"
           rel="stylesheet"
         />
-        {/* Prevent flash of unstyled content */}
         <meta name="color-scheme" content="dark" />
+        {/* Ensure viewport doesn't scale down text on mobile */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </head>
       <body
-        className={`${sora.variable} ${dmMono.variable} font-body antialiased`}
+        className={`${sora.variable} ${dmMono.variable} ${inter.variable} font-body antialiased`}
         suppressHydrationWarning
       >
         {children}

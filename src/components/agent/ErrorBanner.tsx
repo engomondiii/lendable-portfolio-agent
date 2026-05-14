@@ -21,7 +21,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
   return (
     <div
       className={clsx(
-        'rounded-lg border border-risk-danger/20 bg-risk-danger-bg',
+        'rounded-lg border border-risk-danger/30 bg-risk-danger-bg',
         'p-4 animate-fade-in-up'
       )}
       role="alert"
@@ -30,8 +30,8 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
         {/* Icon */}
         <div className="flex-shrink-0 mt-0.5">
           <svg
-            width="16"
-            height="16"
+            width="18"
+            height="18"
             viewBox="0 0 16 16"
             className="text-risk-danger"
             fill="currentColor"
@@ -42,10 +42,12 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <p className="text-risk-danger text-sm font-body font-medium">
+          {/* Title */}
+          <p className="text-risk-danger text-base font-body font-semibold">
             Query failed
           </p>
-          <p className="text-text-secondary text-xs font-body mt-1 leading-relaxed">
+          {/* Message — bright enough to read */}
+          <p className="text-text-primary text-sm font-body mt-1.5 leading-relaxed">
             {message}
           </p>
 
@@ -55,9 +57,9 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
               <button
                 onClick={() => setShowSql(!showSql)}
                 className={clsx(
-                  'text-[11px] font-mono-data text-text-muted',
-                  'hover:text-text-secondary transition-colors',
-                  'flex items-center gap-1'
+                  'text-sm font-mono-data text-text-secondary',
+                  'hover:text-text-primary transition-colors',
+                  'flex items-center gap-1.5'
                 )}
               >
                 <svg
@@ -80,8 +82,8 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
               {showSql && (
                 <pre
                   className={clsx(
-                    'mt-2 p-3 rounded bg-bg-base border border-risk-danger/10',
-                    'text-[11px] font-mono-data text-text-secondary',
+                    'mt-2 p-3 rounded bg-bg-base border border-risk-danger/20',
+                    'text-sm font-mono-data text-text-secondary',
                     'overflow-x-auto whitespace-pre-wrap'
                   )}
                 >
@@ -92,14 +94,14 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-2 mt-3">
+          <div className="flex items-center gap-3 mt-4">
             {onRetry && (
               <button
                 onClick={onRetry}
                 className={clsx(
-                  'text-xs font-body px-2.5 py-1 rounded',
-                  'bg-risk-danger/10 text-risk-danger border border-risk-danger/20',
-                  'hover:bg-risk-danger/20 transition-colors'
+                  'text-sm font-body font-medium px-3 py-1.5 rounded',
+                  'bg-risk-danger/15 text-risk-danger border border-risk-danger/30',
+                  'hover:bg-risk-danger/25 transition-colors'
                 )}
               >
                 Try again
@@ -108,7 +110,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
             {onDismiss && (
               <button
                 onClick={onDismiss}
-                className="text-xs font-body text-text-muted hover:text-text-secondary transition-colors"
+                className="text-sm font-body text-text-secondary hover:text-text-primary transition-colors"
               >
                 Dismiss
               </button>
@@ -120,10 +122,10 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
         {onDismiss && (
           <button
             onClick={onDismiss}
-            className="flex-shrink-0 text-text-muted hover:text-text-secondary transition-colors p-0.5"
+            className="flex-shrink-0 text-text-muted hover:text-text-primary transition-colors p-1 rounded hover:bg-bg-elevated"
             aria-label="Dismiss error"
           >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+            <svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor">
               <path d="M3.293 3.293a1 1 0 011.414 0L7 5.586l2.293-2.293a1 1 0 111.414 1.414L8.414 7l2.293 2.293a1 1 0 01-1.414 1.414L7 8.414l-2.293 2.293a1 1 0 01-1.414-1.414L5.586 7 3.293 4.707a1 1 0 010-1.414z" />
             </svg>
           </button>

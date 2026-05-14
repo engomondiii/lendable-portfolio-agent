@@ -2,10 +2,13 @@
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
+// These paths are RELATIVE to the axios baseURL which is '/api'
+// So '/query/' becomes '/api/query/' which the Next.js proxy handles
+// DO NOT add '/api/' prefix here — the baseURL already provides it
 export const API_ENDPOINTS = {
-  query: '/api/query/',
-  metrics: '/api/portfolio/metrics/',
-  health: '/api/health/',
+  query: '/query/',
+  metrics: '/portfolio/metrics/',
+  health: '/health/',
 } as const;
 
 // ─── Suggested Questions ────────────────────────────────────────────────────

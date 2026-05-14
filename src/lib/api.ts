@@ -4,8 +4,12 @@ import { PortfolioMetrics } from '@/types/portfolio.types';
 import { API_ENDPOINTS, ENABLE_MOCK } from './constants';
 
 // ─── Axios Instance ──────────────────────────────────────────────────────────
+// baseURL is '/api' — this maps to Next.js API routes at src/app/api/
+// Combined with API_ENDPOINTS:
+//   '/api' + '/query/'            → POST /api/query/            → proxied to Django /api/query/
+//   '/api' + '/portfolio/metrics/'→ GET  /api/portfolio/metrics/ → proxied to Django /api/portfolio/metrics/
 const apiClient = axios.create({
-  baseURL: '/api', // Uses Next.js proxy route — avoids CORS
+  baseURL: '/api',
   timeout: 60_000,  // 60s — Claude generation can take time
   headers: {
     'Content-Type': 'application/json',
@@ -31,16 +35,16 @@ apiClient.interceptors.response.use(
 
 // ─── Mock Data (used when ENABLE_MOCK=true and backend isn't running) ─────────
 const MOCK_RESPONSE: QueryResponse = {
-  sql: `SELECT 
+  sql: `SELECT
   h.record_date,
   COUNT(CASE WHEN h.days_late > 0 THEN 1 END) * 100.0 / COUNT(*) as par0_rate,
   COUNT(CASE WHEN h.days_late >= 30 THEN 1 END) * 100.0 / COUNT(*) as par30_rate,
   COUNT(CASE WHEN h.days_late >= 60 THEN 1 END) * 100.0 / COUNT(*) as par60_rate
 FROM history h
 INNER JOIN (
-  SELECT loan_id, MAX(month_on_book) as max_mob 
+  SELECT loan_id, MAX(month_on_book) as max_mob
   FROM history GROUP BY loan_id
-) latest ON h.loan_id = latest.loan_id 
+) latest ON h.loan_id = latest.loan_id
   AND h.month_on_book = latest.max_mob
 WHERE h.status NOT IN ('Paid-off', 'Write-off')
 GROUP BY h.record_date
@@ -74,7 +78,8 @@ const MOCK_METRICS: PortfolioMetrics = {
 // ─── API Functions ───────────────────────────────────────────────────────────
 
 /**
- * Send a natural language question to the agent
+ * Send a natural language question to the agent.
+ * Calls POST /api/query/ via the Next.js proxy route.
  */
 export async function sendQuery(question: string): Promise<QueryResponse> {
   if (ENABLE_MOCK) {
@@ -92,7 +97,8 @@ export async function sendQuery(question: string): Promise<QueryResponse> {
 }
 
 /**
- * Fetch dashboard KPI metrics
+ * Fetch dashboard KPI metrics.
+ * Calls GET /api/portfolio/metrics/ via the Next.js proxy route.
  */
 export async function fetchPortfolioMetrics(): Promise<PortfolioMetrics> {
   if (ENABLE_MOCK) {
