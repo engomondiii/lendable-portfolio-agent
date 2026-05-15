@@ -26,11 +26,11 @@ export const SqlPanel: React.FC = () => {
   const sql = currentResult?.sql ?? null;
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full w-full">
 
       {/* Header */}
-      <div className="flex-shrink-0 flex items-center justify-between px-5 py-4 border-b border-border">
-        <div className="flex items-center gap-2.5">
+      <div className="flex-shrink-0 flex items-center justify-between px-4 py-3.5 border-b border-border">
+        <div className="flex items-center gap-2">
           <span className="text-accent"><SqlIcon /></span>
           <span className="text-text-primary text-sm font-body font-semibold">Generated SQL</span>
           {sql && (
@@ -52,15 +52,14 @@ export const SqlPanel: React.FC = () => {
       </div>
 
       {/* Body */}
-      <ScrollArea className="flex-1 p-5">
+      <ScrollArea className="flex-1 p-4">
         {sql ? (
-          <div className="space-y-5 animate-fade-in-up">
-            {/* SQL code */}
+          <div className="space-y-4 animate-fade-in-up">
             <SqlViewer sql={sql} />
 
             {/* Schema reference */}
-            <div className="rounded-lg border border-border bg-bg-elevated p-4">
-              <p className="text-text-muted text-xs font-mono-data uppercase tracking-wider mb-3">
+            <div className="rounded-lg border border-border bg-bg-elevated p-3.5">
+              <p className="text-text-muted text-[10px] font-mono-data uppercase tracking-wider mb-3">
                 Schema Reference
               </p>
               <div className="space-y-3">
@@ -77,21 +76,21 @@ export const SqlPanel: React.FC = () => {
             </div>
 
             {/* Status definitions */}
-            <div className="rounded-lg border border-border bg-bg-elevated p-4">
-              <p className="text-text-muted text-xs font-mono-data uppercase tracking-wider mb-3">
+            <div className="rounded-lg border border-border bg-bg-elevated p-3.5">
+              <p className="text-text-muted text-[10px] font-mono-data uppercase tracking-wider mb-3">
                 Status Definitions
               </p>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {[
-                  { s: 'Current',   d: '0 days late',     color: 'text-risk-safe'    },
-                  { s: 'PAR',       d: '1–29 days late',   color: 'text-risk-caution' },
-                  { s: 'PAR30',     d: '30–59 days late',  color: 'text-risk-warning' },
-                  { s: 'PAR60',     d: '60–89 days late',  color: 'text-risk-danger'  },
-                  { s: 'Write-off', d: '90+ days late',    color: 'text-risk-danger'  },
-                  { s: 'Paid-off',  d: 'Fully repaid',     color: 'text-risk-neutral' },
+                  { s: 'Current',   d: '0 days late',    color: 'text-risk-safe'    },
+                  { s: 'PAR',       d: '1–29 days late',  color: 'text-risk-caution' },
+                  { s: 'PAR30',     d: '30–59 days late', color: 'text-risk-warning' },
+                  { s: 'PAR60',     d: '60–89 days late', color: 'text-risk-danger'  },
+                  { s: 'Write-off', d: '90+ days late',   color: 'text-risk-danger'  },
+                  { s: 'Paid-off',  d: 'Fully repaid',    color: 'text-risk-neutral' },
                 ].map(({ s, d, color }) => (
-                  <div key={s} className="flex items-center justify-between">
-                    <span className={`text-xs font-mono-data font-medium ${color}`}>{s}</span>
+                  <div key={s} className="flex items-center justify-between py-0.5">
+                    <span className={clsx('text-xs font-mono-data font-medium', color)}>{s}</span>
                     <span className="text-text-muted text-xs font-mono-data">{d}</span>
                   </div>
                 ))}
@@ -99,13 +98,13 @@ export const SqlPanel: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full py-20 text-center">
-            <div className="w-14 h-14 rounded-full bg-bg-elevated border border-border flex items-center justify-center mb-4">
+          <div className="flex flex-col items-center justify-center h-full py-16 text-center">
+            <div className="w-12 h-12 rounded-full bg-bg-elevated border border-border flex items-center justify-center mb-4">
               <span className="text-text-muted"><SqlIcon /></span>
             </div>
-            <p className="text-text-secondary text-sm font-body font-medium">No SQL generated yet</p>
-            <p className="text-text-muted text-xs font-mono-data mt-1">
-              Ask a question to see the generated query
+            <p className="text-text-secondary text-sm font-body font-medium">No SQL yet</p>
+            <p className="text-text-muted text-xs font-mono-data mt-1.5 leading-relaxed max-w-[180px]">
+              Ask a question to see the generated query here
             </p>
           </div>
         )}

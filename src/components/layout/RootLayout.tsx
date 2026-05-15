@@ -12,18 +12,18 @@ interface RootLayoutProps {
 }
 
 export const RootLayout: React.FC<RootLayoutProps> = ({ children, sqlPanel }) => {
-  const { sidebarOpen, sqlPanelOpen, setSqlPanelOpen } = useUIStore();
+  const { sidebarOpen, sqlPanelOpen } = useUIStore();
 
   return (
     <div className="h-screen w-screen overflow-hidden flex flex-col bg-bg-base">
 
-      {/* ── TopBar — full width, fixed height ─────────────────────────── */}
+      {/* TopBar — full width */}
       <TopBar />
 
-      {/* ── Body row — sidebar + main ──────────────────────────────────── */}
+      {/* Body row — sidebar + main + sql panel all in one flex row */}
       <div className="flex flex-1 overflow-hidden min-h-0">
 
-        {/* Sidebar — collapsible, fixed width */}
+        {/* Sidebar — collapses via width transition */}
         <aside
           className={clsx(
             'flex-shrink-0 overflow-hidden',
@@ -35,34 +35,32 @@ export const RootLayout: React.FC<RootLayoutProps> = ({ children, sqlPanel }) =>
           {sidebarOpen && <Sidebar />}
         </aside>
 
-        {/* Main content — takes all remaining space */}
-        <main className="flex-1 overflow-hidden flex flex-col min-w-0 relative">
+        {/* Main content — shrinks when SQL panel opens */}
+        <main className="flex-1 overflow-hidden flex flex-col min-w-0 relative bg-bg-base transition-all duration-300">
           {children}
         </main>
-      </div>
 
-      {/* ── SQL Panel — fixed overlay drawer from the right ────────────── */}
-      {/* Backdrop */}
-      {sqlPanelOpen && (
+        {/* SQL Panel — IN the layout flow, pushes main left when open */}
         <div
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
-          onClick={() => setSqlPanelOpen(false)}
-          aria-hidden
-        />
-      )}
+          className={clsx(
+            'flex-shrink-0 overflow-hidden',
+            'border-l border-border-accent bg-bg-surface',
+            'transition-[width] duration-300 ease-in-out',
+            sqlPanelOpen ? 'w-[400px]' : 'w-0'
+          )}
+        >
+          {/* Always render content so it's ready — just hidden by width:0 */}
+          <div
+            className={clsx(
+              'w-[400px] h-full',
+              'transition-opacity duration-200',
+              sqlPanelOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            )}
+          >
+            {sqlPanel}
+          </div>
+        </div>
 
-      {/* Drawer */}
-      <div
-        className={clsx(
-          'fixed top-0 right-0 h-full z-50',
-          'w-[420px] max-w-[90vw]',
-          'bg-bg-surface border-l border-border',
-          'flex flex-col',
-          'transition-transform duration-300 ease-in-out',
-          sqlPanelOpen ? 'translate-x-0' : 'translate-x-full'
-        )}
-      >
-        {sqlPanel}
       </div>
     </div>
   );
